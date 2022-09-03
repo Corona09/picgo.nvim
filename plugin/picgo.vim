@@ -15,6 +15,18 @@ function! s:check_display_server() abort
 	return $XDG_SESSION_TYPE
 endfunction
 
+" handle result of picgo
+function! s:handle_result(result) abort
+	let l:index = match(a:result, '\[PicGo SUCCESS\]:')
+
+	if l:index < 0
+		return "Failed"
+	endif
+
+	let l:url = a:result[l:index+18 :]
+	return l:url
+endfunction
+
 " Upload Image From Clipboard
 function! picgo#paste_from_clipboard() abort
 	if !executable('picgo')
@@ -53,8 +65,18 @@ function! picgo#paste_from_clipboard() abort
 		let l:url = system("picgo u " . l:tmpfile)
 	endif
 
-	" delete temp file
-	" call system('rm -f ' . l:tmpfile)
+	let l:url = s:handle_result(l:url)
+
+	if l:url == "Failed"
+		echoerr "Failed to upload image " . l:tmpfile
+		let @" = "Failed to upload image " . l:tmpfile
+	else
+		echo "url: " . l:url
+		echo "Upload successfully. You can press 'p' to paste image url."
+		let l:url = 'https://' . l:url
+		let @" = l:url
+		call system("rm -f " . l:tmpfile)
+	endif
 
 	return l:url
 
@@ -64,5 +86,3 @@ let g:loaded_picgo = 1
 if exists("g:loaded_picgo")
 	finish
 endif
-
-" call picgo#paste_from_clipboard()
