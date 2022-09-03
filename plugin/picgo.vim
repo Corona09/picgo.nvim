@@ -132,3 +132,5 @@ if !exists('g:picgo_img_template')
 				\ '</center>'
 				\ ]
 endif
+
+call utils#check()
