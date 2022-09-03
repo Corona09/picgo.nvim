@@ -101,8 +101,11 @@ function! picgo#paste_from_clipboard() abort
 	let l:url = 'https://' . l:url
 	let @" = l:url
 	call system("rm -f " . l:tmpfile)
-	" 插入图像 Insert Image
-	call s:insert_image(l:url)
+
+	if !(exists('g:picgo_insert_image_code') && g:picgo_insert_image_code == 0)
+		" 插入图像 Insert Image
+		call s:insert_image(l:url)
+	endif
 
 	return l:url
 
@@ -114,12 +117,18 @@ if exists("g:loaded_picgo")
 endif
 
 let g:loaded_picgo = 1
-let g:picgo_img_template = [
-			\ '<center>',
-			\ '    <img',
-			\ '        style="width: 100%"',
-			\ '        src="${url}"',
-			\ '    />',
-			\ '</center>'
-			\ ]
-	
+
+if !exists('g:picgo_insert_image_code')
+	let g:picgo_insert_image_code = 1
+endif
+
+if !exists('g:picgo_img_template')
+	let g:picgo_img_template = [
+				\ '<center>',
+				\ '    <img',
+				\ '        style="width: 100%"',
+				\ '        src="${url}"',
+				\ '    />',
+				\ '</center>'
+				\ ]
+endif
