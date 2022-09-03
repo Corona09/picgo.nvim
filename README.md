@@ -1,3 +1,12 @@
+Usage:
+
+```vim
+call picgo#paste_from_clipboard()
+nnoremap YOUR_KEY :call picgo#paste_from_clipboard() <CR>
+```
+
+---
+
 TODO:
 - [x] 检测当前系统
 - [x] 检测当前环境 (x11/wayland)
