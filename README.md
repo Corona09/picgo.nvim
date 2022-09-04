@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This plugin can upload image fro clipboard or from file system (still developing). Although there are similar plugins like [nvim-picgo](https://github.com/askfiy/nvim-picgo) or [coc-picgo](https://github.com/PLDaily/coc-picgo), there are either [not campatible with latest picgo](https://github.com/askfiy/nvim-picgo/issues/2) or already lost maintainance.
+This plugin can upload image fro clipboard or from file system (still developing). Although there are similar plugins like [nvim-picgo](https://github.com/askfiy/nvim-picgo) or [coc-picgo](https://github.com/PLDaily/coc-picgo), there are either not campatible with latest picgo or already lost maintainance.
 
 For now, this plugin only support linux, both wayland and x11.
 
