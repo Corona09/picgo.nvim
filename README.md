@@ -63,6 +63,7 @@ let g:picgo#insert_image_code = 1
 - Cannot upload from clipboard while copy image from nautilus
 
 ## TODO
-- [ ] Upload from file system.
+- [x] Upload from file system.
 - [ ] Optimize action of inserting image code.
-- [ ] Add doc
+- [ ] Add doc.
+- [ ] Multiple config.
