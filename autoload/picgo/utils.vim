@@ -52,3 +52,32 @@ function picgo#utils#insert_image(url) abort
 
 endfunction
 " }}}
+
+" {{{ 检查环境 Check environment
+function! picgo#utils#check_env() abort
+	if !executable('picgo')
+		return [0, "[picgo.nvim] No picgo is executable! please see https://github.com/PicGo/PicGo-Core"]
+	endif
+
+	" 检测系统环境 Detect os
+	if picgo#utils#check_os() != 'linux'
+		return [0,  "[picgo.nvim] Unsupported System! Only Linux is allowed."]
+	endif
+
+	" 检测显示环境是 wayland 还是 x11  Detect which display server is on, wayland or x11
+	let l:display_server = picgo#utils#check_display_server()
+	if l:display_server == "wayland"
+		" wayland
+		if !executable('wl-paste')
+			return [0, "[picgo.nvim] No wl-paste is executable! please see https://github.com/bugaevc/wl-clipboard"]
+		endif
+	else
+		" x server
+		if !executable('xclip')
+			return [0, "[picgo.nvim] No xclip is executable! please see https://github.com/astrand/xclip"]
+		endif
+	endif
+
+	return [1, l:display_server]
+endfunc
+" }}}

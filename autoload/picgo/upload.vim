@@ -30,45 +30,18 @@ function! s:stdout_callback(job_id, data, event) abort
 endfunction
 " }}}
 
-" {{{ 检查环境 Check environment
-function! s:check_env() abort
-	if !executable('picgo')
-		return [0, "[picgo.nvim] No picgo is executable! please see https://github.com/PicGo/PicGo-Core"]
-	endif
-
-	" 检测系统环境 Detect os
-	if picgo#utils#check_os() != 'linux'
-		return [0,  "[picgo.nvim] Unsupported System! Only Linux is allowed."]
-	endif
-
-	" 检测显示环境是 wayland 还是 x11  Detect which display server is on, wayland or x11
-	let l:display_server = picgo#utils#check_display_server()
-	if l:display_server == "wayland"
-		" wayland
-		if !executable('wl-paste')
-			return [0, "[picgo.nvim] No wl-paste is executable! please see https://github.com/bugaevc/wl-clipboard"]
-		endif
-	else
-		" x server
-		if !executable('xclip')
-			return [0, "[picgo.nvim] No xclip is executable! please see https://github.com/astrand/xclip"]
-		endif
-	endif
-
-	return [1, l:display_server]
-endfunc
-" }}}
-
 " {{{ 从剪贴板上传图像 Upload image file from clipboard
 function! picgo#upload#from_clipboard() abort
-	" 检查环境 Check environment
-	let l:check_env_result = s:check_env()
-	if !l:check_env_result[0]
-		echoerr l:check_env_result[1]
-	endif
-
 	echo "Uploading..."
 	" 执行脚本 Execute script
-	call jobstart("sh " . s:upload_script, {'on_stdout': function('s:stdout_callback')})
+	call jobstart("sh " . s:upload_script,
+				\ {'on_stdout': function('s:stdout_callback')})
 endfunction
 " }}}
+
+" 从文件系统上传图像 Upload image from file system
+function! picgo#upload#from_file_system(abs_path) abort
+	echo "Upload..."
+	call jobstart("sh " . s:upload_script . ' ' . a:abs_path,
+				\ {'on_stdout': function('s:stdout_callback')})
+endfunction
