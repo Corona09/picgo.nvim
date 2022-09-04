@@ -7,7 +7,7 @@ echo $tmpfile
 if [ $XDG_SESSION_TYPE = "wayland" ]; then
 	wl-paste --no-newline --type image/png > $tmpfile
 elif [ $XDG_SESSION_TYPE = "x11" ]; then
-	wl-paste --no-newline --type image/png > $tmpfile
+	xclip -selection clipboard -t image/png -o > $tmpfile
 fi
 
 result=`picgo u $tmpfile`
