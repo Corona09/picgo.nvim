@@ -29,7 +29,7 @@ function! picgo#utils#handle_result(result) abort
 	let l:index = match(a:result, '\[PicGo SUCCESS\]:')
 
 	if l:index > 0
-		let l:url = a:result[l:index+18 : -2]
+		let l:url = a:result[l:index+17 : -2]
 		return ["Success", l:url]
 	endif
 
