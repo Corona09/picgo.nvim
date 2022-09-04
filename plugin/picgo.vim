@@ -5,7 +5,7 @@ endif
 let g:picgo#loaded = 1
 
 if !exists('g:picgo#insert_image_code')
-	let g:picgo#insert_image_code = 0
+	let g:picgo#insert_image_code = 1
 endif
 
 if !exists('g:picgo#image_code_template')

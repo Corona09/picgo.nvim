@@ -20,14 +20,20 @@ endfunction
 
 " {{{ 处理 picgo 的返回结果 Handle result of picgo
 function! picgo#utils#handle_result(result) abort
+	" 检查是否失败 check whether failed
+	let l:index = match(a:result, '\[PicGo ERROR\]')
+	if l:index > 0
+		return ["Failed", ""]
+	endif
+		
 	let l:index = match(a:result, '\[PicGo SUCCESS\]:')
 
-	if l:index < 0
-		return "Failed"
+	if l:index > 0
+		let l:url = a:result[l:index+18 : -2]
+		return ["Success", l:url]
 	endif
 
-	let l:url = a:result[l:index+18 : -2]
-	return l:url
+	return ["", ""]
 endfunction
 " }}}
 

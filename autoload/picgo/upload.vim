@@ -1,63 +1,74 @@
-" {{{ 从剪贴板上传图像 Upload Image From Clipboard
-function! picgo#upload#from_clipboard() abort
+let s:upload_script = fnamemodify(expand('<sfile>'), ':h') . "/../../bin/upload.sh"
+
+" {{{ 处理上传脚本输出的回调函数 Callback to handle result by uploading script.
+function! s:stdout_callback(job_id, data, event) abort
+	if empty(a:data) || len(a:data) <= 1 | return | endif
+
+	let l:result = join(a:data)
+	let l:handle_result = picgo#utils#handle_result(l:result)
+
+	" 上传失败 Failed
+	if l:handle_result[0] == "Failed"
+		echoerr "[picgo.nvim] Failed to upload image. Press p to paste picgo output."
+		let @" = l:result
+		return l:result
+	elseif l:handle_result[0] == "Success"
+		let l:url = l:handle_result[1]
+		
+		" 上传成功 Success to upload
+		echomsg "[picgo.nvim] Upload successfully. You can press 'p' to paste image url."
+		let l:url = 'https://' . l:url
+		let @" = l:url
+		
+		if exists('g:picgo#insert_image_code') && g:picgo#insert_image_code == 1
+			call picgo#utils#insert_image(l:url)
+		endif
+	else
+		" 什么也不做 Do nothing
+	endif
+
+endfunction
+" }}}
+
+" {{{ 检查环境 Check environment
+function! s:check_env() abort
 	if !executable('picgo')
-		echoerr "no picgo is executable! please see https://github.com/PicGo/PicGo-Core"
+		return [0, "[picgo.nvim] No picgo is executable! please see https://github.com/PicGo/PicGo-Core"]
 	endif
 
 	" 检测系统环境 Detect os
 	if picgo#utils#check_os() != 'linux'
-		echoerr "Unsupported System! Only Linux is allowed."
+		return [0,  "[picgo.nvim] Unsupported System! Only Linux is allowed."]
 	endif
 
-	" 创建临时文件 Make temp file
-	let l:now = strftime('%Y-%m-%d_%H-%M-%S')
-	let l:tmpfile = system('mktemp -t ' . l:now . '.XXXXXXXXX --suffix .png')
-	echo l:tmpfile
-	let l:result = ""
-
 	" 检测显示环境是 wayland 还是 x11  Detect which display server is on, wayland or x11
-	if picgo#utils#check_display_server() == "wayland"
+	let l:display_server = picgo#utils#check_display_server()
+	if l:display_server == "wayland"
 		" wayland
 		if !executable('wl-paste')
-			echoerr "no wl-paste is executable! please see https://github.com/bugaevc/wl-clipboard"
+			return [0, "[picgo.nvim] No wl-paste is executable! please see https://github.com/bugaevc/wl-clipboard"]
 		endif
-
-		" output image file in clipboard to temp file
-		call system("wl-paste --no-newline --type image/png > " . l:tmpfile)
-		echo "Uploading..."
-		let l:result =  system("picgo u " . l:tmpfile)
 	else
 		" x server
 		if !executable('xclip')
-			echoerr "no xclip is executable! please see https://github.com/astrand/xclip"
+			return [0, "[picgo.nvim] No xclip is executable! please see https://github.com/astrand/xclip"]
 		endif
-
-		call system("xclip -selection clipboard -t image/png -o > " . l:tmpfile)
-		let l:result = system("picgo u " . l:tmpfile)
 	endif
 
-	let l:url = picgo#utils#handle_result(l:result)
+	return [1, l:display_server]
+endfunc
+" }}}
 
-	" 上传失败 Failed
-	if l:url == "Failed"
-		echoerr "Failed to upload image " . l:tmpfile
-		let @" = "Failed to upload image " . l:tmpfile
-		return l:result
+" {{{ 从剪贴板上传图像 Upload image file from clipboard
+function! picgo#upload#from_clipboard() abort
+	" 检查环境 Check environment
+	let l:check_env_result = s:check_env()
+	if !l:check_env_result[0]
+		echoerr l:check_env_result[1]
 	endif
 
-	" 成功上传 Success
-	echo "url: " . l:url
-	echo "Upload successfully. You can press 'p' to paste image url."
-	let l:url = 'https://' . l:url
-	let @" = l:url
-	call system("rm -f " . l:tmpfile)
-
-	if (exists('g:picgo#insert_image_code') && g:picgo#insert_image_code == 1)
-		" 插入图像 Insert Image
-		call picgo#utils#insert_image(l:url)
-	endif
-
-	return l:url
-
+	echo "Uploading..."
+	" 执行脚本 Execute script
+	call jobstart("sh " . s:upload_script, {'on_stdout': function('s:stdout_callback')})
 endfunction
 " }}}
