@@ -18,15 +18,8 @@ After image was uploaded, you can also press `p` to insert its url.
 ```vim
 " picgo#image_cdoe_template is an array of string
 " the plugin will replace ${url} with image url returned by picgo
-" the default value is as below
-let g:picgo#image_cdoe_template = [
-			\ '<center>',
-			\ '    <img',
-			\ '        style="width: 100%"',
-			\ '        src="${url}"',
-			\ '    />',
-			\ '</center>'
-			\ ]
+" the default value is as [ '![]( ${url} )' ]
+let g:picgo#image_code_template = [ '![]( ${url} )' ]
 
 ```
 </details>
@@ -37,8 +30,8 @@ let g:picgo#image_cdoe_template = [
 ```vim
 " if you do not want to insert code after uploading
 " you can set g:picgo#insert_image_code to 0
-" default value : 1
-let g:picgo#insert_image_code = 0
+" default value : 0
+let g:picgo#insert_image_code = 1
 ```
 </details>
 

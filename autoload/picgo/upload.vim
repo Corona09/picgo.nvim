@@ -52,7 +52,7 @@ function! picgo#upload#from_clipboard() abort
 	let @" = l:url
 	call system("rm -f " . l:tmpfile)
 
-	if !(exists('g:picgo#insert_image_code') && g:picgo#insert_image_code == 0)
+	if (exists('g:picgo#insert_image_code') && g:picgo#insert_image_code == 1)
 		" 插入图像 Insert Image
 		call picgo#utils#insert_image(l:url)
 	endif
