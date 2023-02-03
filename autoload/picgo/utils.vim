@@ -78,7 +78,7 @@ function! picgo#utils#check_env() abort
 	else
 		" x server
 		if !executable('xclip')
-			if picgo#show_warning
+			if g:picgo#show_warning
 				return [0, "[picgo.nvim] No xclip is executable! please see https://github.com/astrand/xclip"]
 			endif
 		endif
