@@ -56,7 +56,9 @@ endfunction
 " {{{ 检查环境 Check environment
 function! picgo#utils#check_env() abort
 	if !executable('picgo')
-		return [0, "[picgo.nvim] No picgo is executable! please see https://github.com/PicGo/PicGo-Core"]
+		if g:picgo#show_warning
+			return [0, "[picgo.nvim] No picgo is executable! please see https://github.com/PicGo/PicGo-Core"]
+		endif
 	endif
 
 	" 检测系统环境 Detect os
@@ -69,12 +71,16 @@ function! picgo#utils#check_env() abort
 	if l:display_server == "wayland"
 		" wayland
 		if !executable('wl-paste')
-			return [0, "[picgo.nvim] No wl-paste is executable! please see https://github.com/bugaevc/wl-clipboard"]
+			if g:picgo#show_warning
+				return [0, "[picgo.nvim] No wl-paste is executable! please see https://github.com/bugaevc/wl-clipboard"]
+			endif
 		endif
 	else
 		" x server
 		if !executable('xclip')
-			return [0, "[picgo.nvim] No xclip is executable! please see https://github.com/astrand/xclip"]
+			if picgo#show_warning
+				return [0, "[picgo.nvim] No xclip is executable! please see https://github.com/astrand/xclip"]
+			endif
 		endif
 	endif
 

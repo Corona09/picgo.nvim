@@ -13,6 +13,10 @@ if !exists('g:picgo#image_code_template')
 	let g:picgo#image_code_template = [ '![](${url})' ]
 endif
 
+if !exists('g:picgo#show_warning')
+	let g:picgo#show_warning = 1
+endif
+
 " 自定义命令 Custom command
 command! -nargs=0 UploadImageFromClipboard call picgo#upload#from_clipboard()
 command! -nargs=1 UploadImageFromFileSystem call picgo#upload#from_file_system(<f-args>)

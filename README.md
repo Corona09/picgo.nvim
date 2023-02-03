@@ -56,6 +56,15 @@ let g:picgo#insert_image_code = 1
 ```
 </details>
 
+<details close>
+	<summary><code>g:pigco#show_warning</code></summary>
+```vim
+" set to 0 to disable warning for picgo/xclip/wl-clipboard
+" default value: 1
+let g:picgo#show_warning = 0
+```
+</details>
+
 ---
 
 ## Known issues
